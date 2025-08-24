@@ -1,0 +1,133 @@
+# Copyright (C) 2025 David William da Costa
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Locator WooCommerce Filter 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/agenciadw/simple-locator-filter\n"
+"POT-Creation-Date: 2025-01-27 10:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: simple-locator-woocommerce-filter.php:89
+msgid "Simple Locator WooCommerce Filter requer o plugin WooCommerce para funcionar."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:95
+msgid "Simple Locator WooCommerce Filter requer o plugin Simple Locator para funcionar."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:158
+msgid "Nenhum produto encontrado com os critérios especificados."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:245
+msgid "Consulte o preço"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:275
+msgid "Nenhum produto com localização encontrado. Verifique se os produtos têm coordenadas de latitude e longitude configuradas."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:295
+msgid "Produtos Encontrados (%d)"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:315
+msgid "Ver no Mapa"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:340
+msgid "Erro: Google Maps não está carregado. Verifique se a API key está configurada."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:375
+msgid "Endereço:"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:377
+msgid "Ver Produto"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:420
+msgid "Latitude"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:421
+msgid "Coordenada de latitude do produto"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:428
+msgid "Longitude"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:429
+msgid "Coordenada de longitude do produto"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:436
+msgid "Endereço"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:437
+msgid "Endereço completo"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:438
+msgid "Endereço do produto para exibição"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:470
+msgid "ID do produto não especificado"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:478
+msgid "Meta campos do produto ID: %d"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:490
+msgid "Simple Locator WC Filter"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:491
+msgid "SL WC Filter"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:502
+msgid "Simple Locator WooCommerce Filter"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:510
+msgid "Como Usar"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:512
+msgid "Shortcode Básico"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:515
+msgid "Shortcode com Debug"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:518
+msgid "Shortcode Completo"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:535
+msgid "Configurações Principais"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:536
+msgid "Configure as opções do plugin Simple Locator WooCommerce Filter."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:541
+msgid "Google Maps API Key"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:547
+msgid "Insira sua chave da API do Google Maps. Você pode obter uma em <a href=\"https://console.cloud.google.com/\" target=\"_blank\">Google Cloud Console</a>."
+msgstr ""
