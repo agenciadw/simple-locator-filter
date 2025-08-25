@@ -133,3 +133,11 @@ msgstr "Clave API de Google Maps"
 #: simple-locator-woocommerce-filter.php:547
 msgid "Insira sua chave da API do Google Maps. Você pode obter uma em <a href=\"https://console.cloud.google.com/\" target=\"_blank\">Google Cloud Console</a>."
 msgstr "Inserte su clave API de Google Maps. Puede obtener una en <a href=\"https://console.cloud.google.com/\" target=\"_blank\">Google Cloud Console</a>."
+
+#: simple-locator-woocommerce-filter.php:580
+msgid "Para melhor qualidade das imagens quadradas, recomendamos regenerar as imagens dos produtos. Use um plugin como \"Regenerate Thumbnails\" para criar os novos tamanhos de imagem."
+msgstr "Para mejor calidad de imágenes cuadradas, recomendamos regenerar las imágenes de los productos. Use un plugin como \"Regenerate Thumbnails\" para crear los nuevos tamaños de imagen."
+
+#: simple-locator-woocommerce-filter.php:583
+msgid "Instalar Regenerate Thumbnails"
+msgstr "Instalar Regenerate Thumbnails"

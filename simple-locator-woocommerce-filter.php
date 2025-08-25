@@ -22,6 +22,37 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Função para obter imagem do produto com melhor qualidade
+ */
+function slwf_get_product_image_url($product_id, $size = 'slwf-product-square') {
+    $image_url = '';
+    $image_id = get_post_thumbnail_id($product_id);
+    
+    if ($image_id) {
+        // Tentar obter imagem no tamanho especificado
+        $image_url = wp_get_attachment_image_url($image_id, $size);
+        
+        // Se não existir, tentar outros tamanhos personalizados
+        if (!$image_url) {
+            $available_sizes = array('slwf-product-square', 'slwf-product-square-small', 'medium', 'medium_large', 'large', 'thumbnail');
+            foreach ($available_sizes as $available_size) {
+                $image_url = wp_get_attachment_image_url($image_id, $available_size);
+                if ($image_url) {
+                    break;
+                }
+            }
+        }
+        
+        // Se ainda não encontrou, usar a imagem original
+        if (!$image_url) {
+            $image_url = wp_get_attachment_image_url($image_id, 'full');
+        }
+    }
+    
+    return $image_url;
+}
+
 // Definir constantes do plugin
 define('SLWF_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SLWF_PLUGIN_PATH', plugin_dir_path(__FILE__));
@@ -71,6 +102,9 @@ class SimpleLocatorWooCommerceFilter {
         // Carregar Google Maps
         add_action('wp_enqueue_scripts', array($this, 'enqueue_google_maps'));
         
+        // Carregar CSS do plugin
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+        
         // Adicionar shortcode de debug
         add_shortcode('debug_product_meta', array($this, 'debug_product_meta_shortcode'));
         
@@ -79,6 +113,12 @@ class SimpleLocatorWooCommerceFilter {
         
         // Registrar configurações
         add_action('admin_init', array($this, 'register_settings'));
+        
+        // Registrar tamanhos de imagem personalizados
+        add_action('after_setup_theme', array($this, 'add_custom_image_sizes'));
+        
+        // Adicionar notificação sobre regeneração de imagens
+        add_action('admin_notices', array($this, 'regenerate_images_notice'));
     }
     
     /**
@@ -286,6 +326,9 @@ class SimpleLocatorWooCommerceFilter {
                     $price_html = '<span style="color: #353535;">' . __('Consulte o preço', 'simple-locator-wc-filter') . '</span>';
                 }
                 
+                // Buscar imagem do produto com melhor qualidade
+                $image_url = slwf_get_product_image_url($product_id, 'slwf-product-square');
+                
                 $locations_data[] = array(
                     'id' => $product_id,
                     'title' => get_the_title(),
@@ -294,7 +337,7 @@ class SimpleLocatorWooCommerceFilter {
                     'address' => $address,
                     'url' => get_permalink(),
                     'price' => $price_html,
-                    'image' => get_the_post_thumbnail_url($product_id, 'thumbnail')
+                    'image' => $image_url
                 );
             }
         }
@@ -333,37 +376,51 @@ class SimpleLocatorWooCommerceFilter {
         ?>
         
         <div id="<?php echo $map_id; ?>_container" class="simple-locator-products-container">
+            <!-- CSS Crítico Inline - Estilos essenciais para renderização inicial -->
+            <style>
+                /* CSS Crítico - Carregamento imediato */
+                .products-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+                    max-width: 100%;
+                }
+                .product-image-square {
+                    width: 100%;
+                    aspect-ratio: 1/1;
+                    object-fit: cover;
+                    margin-bottom: 15px;
+                    border-radius: 5px;
+                }
+                @media (max-width: 768px) {
+                    .products-grid {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                    }
+                }
+                @media (max-width: 480px) {
+                    .products-grid {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
+            </style>
             
-            <!-- Container do Mapa (agora primeiro) -->
-            <div id="<?php echo $map_id; ?>" style="width: 100%; height: <?php echo $atts['map_height']; ?>; border: 1px solid #ccc; margin-bottom: 30px;"></div>
+            <!-- Container do Mapa -->
+            <div id="<?php echo $map_id; ?>" class="simple-locator-map" style="height: <?php echo $atts['map_height']; ?>;"></div>
             
             <?php if ($atts['show_list'] === 'true'): ?>
-            <!-- Lista de produtos (agora com 3 colunas) -->
+            <!-- Lista de produtos -->
             <div class="products-list">
                 <h3><?php echo sprintf(__('Produtos Encontrados (%d)', 'simple-locator-wc-filter'), count($locations_data)); ?></h3>
-                <div class="products-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 100%;">
-                    <style>
-                        @media (max-width: 768px) {
-                            .products-grid {
-                                grid-template-columns: repeat(2, 1fr) !important;
-                            }
-                        }
-                        @media (max-width: 480px) {
-                            .products-grid {
-                                grid-template-columns: 1fr !important;
-                            }
-                        }
-                    </style>
+                <div class="products-grid">
                     <?php foreach ($locations_data as $location): ?>
-                    <div class="product-item" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div class="product-item">
                         <?php if ($location['image']): ?>
-                        <img src="<?php echo $location['image']; ?>" alt="<?php echo esc_attr($location['title']); ?>" style="width: 100%; height: 180px; object-fit: cover; margin-bottom: 15px; border-radius: 5px;">
+                        <img src="<?php echo $location['image']; ?>" alt="<?php echo esc_attr($location['title']); ?>" class="product-image-square">
                         <?php endif; ?>
-                        <h4 style="margin: 0 0 10px 0; font-size: 16px;"><a href="<?php echo $location['url']; ?>" style="text-decoration: none; color: #333;"><?php echo $location['title']; ?></a></h4>
-                        <p class="price" style="font-weight: bold; color: #353535; margin: 8px 0;"><?php echo $location['price']; ?></p>
-                        <p class="address" style="color: #666; font-size: 14px; margin: 8px 0;"><?php echo $location['address']; ?></p>
-                        <button onclick="focusMapLocation(<?php echo $location['lat']; ?>, <?php echo $location['lng']; ?>)" 
-                                style="background: #fb7203; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 14px; transition: background 0.3s;">
+                        <h4><a href="<?php echo $location['url']; ?>"><?php echo $location['title']; ?></a></h4>
+                        <p class="price"><?php echo $location['price']; ?></p>
+                        <p class="address"><?php echo $location['address']; ?></p>
+                        <button onclick="focusMapLocation(<?php echo $location['lat']; ?>, <?php echo $location['lng']; ?>)">
                             <?php _e('Ver no Mapa', 'simple-locator-wc-filter'); ?>
                         </button>
                     </div>
@@ -419,10 +476,10 @@ class SimpleLocatorWooCommerceFilter {
                 var infoWindow = new google.maps.InfoWindow({
                     content: `
                         <div style="max-width: 300px;">
-                            ${location.image ? '<img src="' + location.image + '" style="width: 100%; max-width: 200px; height: auto; margin-bottom: 10px;">' : ''}
-                            <h4><a href="${location.url}" target="_blank">${location.title}</a></h4>
-                            <p><strong><?php _e('Endereço:', 'simple-locator-wc-filter'); ?></strong> ${location.address}</p>
-                            <a href="${location.url}" target="_blank" style="background: #fb7203; color: white; padding: 8px 15px; text-decoration: none; border-radius: 3px; display: inline-block; margin-top: 5px;"><?php _e('Ver Produto', 'simple-locator-wc-filter'); ?></a>
+                            ${location.image ? '<img src="' + location.image + '" class="map-popup-image">' : ''}
+                            <h4 class="map-popup-title"><a href="${location.url}" target="_blank">${location.title}</a></h4>
+                            <p class="map-popup-address"><strong><?php _e('Endereço:', 'simple-locator-wc-filter'); ?></strong> ${location.address}</p>
+                            <a href="${location.url}" target="_blank" class="map-popup-button"><?php _e('Ver Produto', 'simple-locator-wc-filter'); ?></a>
                         </div>
                     `
                 });
@@ -551,6 +608,18 @@ class SimpleLocatorWooCommerceFilter {
     }
     
     /**
+     * Carregar estilos CSS do plugin
+     */
+    public function enqueue_styles() {
+        wp_enqueue_style(
+            'simple-locator-wc-filter',
+            SLWF_PLUGIN_URL . 'assets/css/simple-locator-wc-filter.css',
+            array(),
+            SLWF_PLUGIN_VERSION
+        );
+    }
+    
+    /**
      * Shortcode de debug
      */
     public function debug_product_meta_shortcode($atts) {
@@ -659,6 +728,34 @@ class SimpleLocatorWooCommerceFilter {
         echo '<input type="text" name="slwf_google_maps_api_key" value="' . esc_attr($api_key) . '" class="regular-text" />';
         echo '<p class="description">' . __('Insira sua chave da API do Google Maps. Você pode obter uma em <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>.', 'simple-locator-wc-filter') . '</p>';
     }
+    
+    /**
+     * Adicionar tamanhos de imagem personalizados
+     */
+    public function add_custom_image_sizes() {
+        // Tamanho quadrado para produtos (300x300px)
+        add_image_size('slwf-product-square', 300, 300, true);
+        
+        // Tamanho quadrado menor para mobile (200x200px)
+        add_image_size('slwf-product-square-small', 200, 200, true);
+    }
+    
+    /**
+     * Notificação sobre regeneração de imagens
+     */
+    public function regenerate_images_notice() {
+        if (get_option('slwf_regenerate_images_notice', false)) {
+            echo '<div class="notice notice-info is-dismissible">';
+            echo '<p><strong>Simple Locator WooCommerce Filter:</strong> ';
+            echo __('Para melhor qualidade das imagens quadradas, recomendamos regenerar as imagens dos produtos. Use um plugin como "Regenerate Thumbnails" para criar os novos tamanhos de imagem.', 'simple-locator-wc-filter');
+            echo '</p>';
+            echo '<p><a href="' . admin_url('plugin-install.php?s=regenerate+thumbnails&tab=search&type=term') . '" class="button button-primary">' . __('Instalar Regenerate Thumbnails', 'simple-locator-wc-filter') . '</a></p>';
+            echo '</div>';
+            
+            // Remover a notificação após exibir
+            delete_option('slwf_regenerate_images_notice');
+        }
+    }
 }
 
 // Inicializar o plugin
@@ -671,6 +768,13 @@ function slwf_activate() {
     if (!get_option('slwf_google_maps_api_key')) {
         add_option('slwf_google_maps_api_key', '');
     }
+    
+    // Registrar tamanhos de imagem personalizados
+    add_image_size('slwf-product-square', 300, 300, true);
+    add_image_size('slwf-product-square-small', 200, 200, true);
+    
+    // Notificar sobre regeneração de imagens
+    add_option('slwf_regenerate_images_notice', true);
 }
 
 // Desativação do plugin
