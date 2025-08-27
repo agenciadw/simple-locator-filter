@@ -141,3 +141,7 @@ msgstr "Para mejor calidad de imágenes cuadradas, recomendamos regenerar las im
 #: simple-locator-woocommerce-filter.php:583
 msgid "Instalar Regenerate Thumbnails"
 msgstr "Instalar Regenerate Thumbnails"
+
+#: simple-locator-woocommerce-filter.php:315
+msgid "Carregando..."
+msgstr "Cargando..."

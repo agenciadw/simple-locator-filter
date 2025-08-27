@@ -1,7 +1,7 @@
 # Instruções para o Filtro Simple Locator + WooCommerce
 
 **Autor:** David William da Costa  
-**Versão:** 0.1.0  
+**Versão:** 0.2.0  
 **Plugin URI:** https://github.com/agenciadw/simple-locator-filter
 
 ## ✅ Problemas Corrigidos

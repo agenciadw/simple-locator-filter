@@ -1,7 +1,7 @@
 # Guia de Instalação - Simple Locator WooCommerce Filter
 
 **Autor:** David William da Costa  
-**Versão:** 0.1.0  
+**Versão:** 0.2.0  
 **Plugin URI:** https://github.com/agenciadw/simple-locator-filter
 
 ## 📦 Arquivos do Plugin

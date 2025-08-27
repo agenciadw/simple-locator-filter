@@ -139,3 +139,11 @@ msgstr ""
 #: simple-locator-woocommerce-filter.php:583
 msgid "Instalar Regenerate Thumbnails"
 msgstr ""
+
+#: simple-locator-woocommerce-filter.php:315
+msgid "Ver Produto"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:315
+msgid "Carregando..."
+msgstr ""

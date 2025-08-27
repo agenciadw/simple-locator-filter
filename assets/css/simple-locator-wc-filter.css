@@ -128,7 +128,35 @@
    BOTÕES
    ======================================== */
 
-.product-item button {
+.product-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Layout responsivo para botões em telas maiores */
+@media (min-width: 768px) {
+  .product-buttons {
+    gap: 10px;
+  }
+}
+
+/* Layout responsivo para botões em mobile */
+@media (max-width: 480px) {
+  .product-buttons {
+    gap: 6px;
+  }
+
+  .product-item button,
+  .product-item .btn-product {
+    padding: 10px 15px;
+    font-size: 15px;
+  }
+}
+
+.product-item button,
+.product-item .btn-product {
   background: #fb7203;
   color: white;
   border: none;
@@ -139,16 +167,58 @@
   font-size: 14px;
   transition: all 0.3s ease;
   font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  box-sizing: border-box;
 }
 
-.product-item button:hover {
+.product-item button:hover,
+.product-item .btn-product:hover {
   background: #e66500;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(251, 114, 3, 0.3);
+  color: white;
+  text-decoration: none;
 }
 
-.product-item button:active {
+.product-item button:active,
+.product-item .btn-product:active {
   transform: translateY(0);
+}
+
+/* Estilo específico para o botão "Ver Produto" */
+.btn-product {
+  background: #28a745 !important;
+}
+
+.btn-product:hover {
+  background: #218838 !important;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3) !important;
+}
+
+/* Estilo específico para o botão "Ver no Mapa" */
+.btn-map {
+  background: #fb7203 !important;
+}
+
+.btn-map:hover {
+  background: #e66500 !important;
+  box-shadow: 0 2px 4px rgba(251, 114, 3, 0.3) !important;
+}
+
+/* Estado de loading para botões */
+.btn-map:disabled,
+.btn-product:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-map:disabled:hover,
+.btn-product:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* ========================================
@@ -161,6 +231,14 @@
   margin-bottom: 30px;
   border-radius: 8px;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Efeito de destaque quando o mapa é focado */
+.simple-locator-map.map-highlight {
+  border: 2px solid #fb7203;
+  box-shadow: 0 0 15px rgba(251, 114, 3, 0.3);
+  transform: scale(1.01);
 }
 
 /* ========================================
@@ -308,9 +386,15 @@
 
 /* Foco visível para navegação por teclado */
 .product-item button:focus,
-.product-item h4 a:focus {
+.product-item h4 a:focus,
+.product-item .btn-product:focus {
   outline: 2px solid #fb7203;
   outline-offset: 2px;
+}
+
+/* Foco específico para botão "Ver Produto" */
+.btn-product:focus {
+  outline-color: #28a745;
 }
 
 /* Contraste melhorado para leitores de tela */
@@ -332,6 +416,7 @@
 
 @media print {
   .product-item button,
+  .product-item .btn-product,
   .map-popup-button {
     display: none;
   }

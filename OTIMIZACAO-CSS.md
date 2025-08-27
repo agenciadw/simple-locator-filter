@@ -273,5 +273,5 @@ Para dúvidas sobre otimização CSS:
 ---
 
 **Desenvolvido por:** David William da Costa  
-**Versão:** 0.1.0  
+**Versão:** 0.2.0  
 **GitHub:** https://github.com/agenciadw/simple-locator-filter

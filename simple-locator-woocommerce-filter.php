@@ -3,7 +3,7 @@
  * Plugin Name: Simple Locator WooCommerce Filter
  * Plugin URI: https://github.com/agenciadw/simple-locator-filter
  * Description: Integra o Simple Locator com produtos do WooCommerce, permitindo filtrar produtos por localização e exibi-los em um mapa interativo.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: David William da Costa
  * Author URI: https://github.com/agenciadw
  * Text Domain: simple-locator-wc-filter
@@ -56,7 +56,7 @@ function slwf_get_product_image_url($product_id, $size = 'slwf-product-square') 
 // Definir constantes do plugin
 define('SLWF_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SLWF_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('SLWF_PLUGIN_VERSION', '0.1.0');
+define('SLWF_PLUGIN_VERSION', '0.2.0');
 
 /**
  * Classe principal do plugin
@@ -420,9 +420,14 @@ class SimpleLocatorWooCommerceFilter {
                         <h4><a href="<?php echo $location['url']; ?>"><?php echo $location['title']; ?></a></h4>
                         <p class="price"><?php echo $location['price']; ?></p>
                         <p class="address"><?php echo $location['address']; ?></p>
-                        <button onclick="focusMapLocation(<?php echo $location['lat']; ?>, <?php echo $location['lng']; ?>)">
-                            <?php _e('Ver no Mapa', 'simple-locator-wc-filter'); ?>
-                        </button>
+                        <div class="product-buttons">
+                            <button onclick="focusMapLocation(<?php echo $location['lat']; ?>, <?php echo $location['lng']; ?>, this)" class="btn-map">
+                                <?php _e('Ver no Mapa', 'simple-locator-wc-filter'); ?>
+                            </button>
+                            <a href="<?php echo $location['url']; ?>" class="btn-product">
+                                <?php _e('Ver Produto', 'simple-locator-wc-filter'); ?>
+                            </a>
+                        </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -510,31 +515,75 @@ class SimpleLocatorWooCommerceFilter {
             }
 
             // Função global para focar em uma localização específica
-            window.focusMapLocation = function(lat, lng) {
-                map.setCenter({lat: lat, lng: lng});
-                map.setZoom(15);
+            window.focusMapLocation = function(lat, lng, buttonElement) {
+                // Adicionar estado de loading ao botão se fornecido
+                if (buttonElement) {
+                    var originalText = buttonElement.innerHTML;
+                    buttonElement.innerHTML = '<?php _e('Carregando...', 'simple-locator-wc-filter'); ?>';
+                    buttonElement.disabled = true;
+                }
                 
-                // Encontrar e abrir o marcador correspondente
-                markers.forEach(function(marker) {
-                    var pos = marker.getPosition();
-                    if (Math.abs(pos.lat() - lat) < 0.0001 && Math.abs(pos.lng() - lng) < 0.0001) {
-                        // Fechar todas as infoWindows
-                        markers.forEach(function(m) {
-                            if (m.infoWindow) {
-                                m.infoWindow.close();
-                            }
+                // Scroll suave para o mapa
+                var mapElement = document.getElementById('<?php echo $map_id; ?>');
+                if (mapElement) {
+                    // Adicionar classe de destaque temporária
+                    mapElement.classList.add('map-highlight');
+                    
+                    // Verificar se o navegador suporta scroll suave
+                    if ('scrollBehavior' in document.documentElement.style) {
+                        mapElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
-                        
-                        // Abrir a infoWindow do marcador clicado
-                        marker.infoWindow.open(map, marker);
-                        
-                        // Animação no marcador
-                        marker.setAnimation(google.maps.Animation.BOUNCE);
-                        setTimeout(function() {
-                            marker.setAnimation(null);
-                        }, 2000);
+                    } else {
+                        // Fallback para navegadores antigos
+                        var mapPosition = mapElement.offsetTop - 20; // 20px de margem
+                        window.scrollTo(0, mapPosition);
                     }
-                });
+                }
+                
+                // Aguardar um pouco para o scroll terminar antes de focar no mapa
+                setTimeout(function() {
+                    map.setCenter({lat: lat, lng: lng});
+                    map.setZoom(15);
+                    
+                    // Encontrar e abrir o marcador correspondente
+                    markers.forEach(function(marker) {
+                        var pos = marker.getPosition();
+                        if (Math.abs(pos.lat() - lat) < 0.0001 && Math.abs(pos.lng() - lng) < 0.0001) {
+                            // Fechar todas as infoWindows
+                            markers.forEach(function(m) {
+                                if (m.infoWindow) {
+                                    m.infoWindow.close();
+                                }
+                            });
+                            
+                            // Abrir a infoWindow do marcador clicado
+                            marker.infoWindow.open(map, marker);
+                            
+                            // Animação no marcador
+                            marker.setAnimation(google.maps.Animation.BOUNCE);
+                            setTimeout(function() {
+                                marker.setAnimation(null);
+                            }, 2000);
+                        }
+                    });
+                    
+                    // Restaurar botão após 1 segundo
+                    if (buttonElement) {
+                        setTimeout(function() {
+                            buttonElement.innerHTML = originalText;
+                            buttonElement.disabled = false;
+                        }, 1000);
+                    }
+                    
+                    // Remover classe de destaque após 2 segundos
+                    setTimeout(function() {
+                        if (mapElement) {
+                            mapElement.classList.remove('map-highlight');
+                        }
+                    }, 2000);
+                }, 500); // Aguarda 500ms para o scroll terminar
             };
         });
         </script>
