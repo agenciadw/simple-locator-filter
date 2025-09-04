@@ -233,7 +233,7 @@ class SimpleLocatorWooCommerceFilter {
         }
         
         if (!$products->have_posts()) {
-            return $debug_info . '<p>' . __('Nenhum produto encontrado com os critérios especificados.', 'simple-locator-wc-filter') . '</p>';
+            return $debug_info . '<p>' . __('Nenhum montador encontrado com os critérios especificados.', 'simple-locator-wc-filter') . '</p>';
         }
 
         // Preparar dados para o mapa
@@ -329,6 +329,11 @@ class SimpleLocatorWooCommerceFilter {
                 // Buscar imagem do produto com melhor qualidade
                 $image_url = slwf_get_product_image_url($product_id, 'slwf-product-square');
                 
+                // Obter dados para ordenação
+                $product_date = get_the_date('Y-m-d H:i:s');
+                $product_rating = $product->get_average_rating();
+                $product_review_count = $product->get_review_count();
+                
                 $locations_data[] = array(
                     'id' => $product_id,
                     'title' => get_the_title(),
@@ -337,10 +342,22 @@ class SimpleLocatorWooCommerceFilter {
                     'address' => $address,
                     'url' => get_permalink(),
                     'price' => $price_html,
-                    'image' => $image_url
+                    'image' => $image_url,
+                    'date' => $product_date,
+                    'rating' => $product_rating,
+                    'review_count' => $product_review_count
                 );
             }
         }
+        
+        // Ordenação padrão (alfabética)
+        usort($locations_data, function($a, $b) {
+            return strcmp($a['title'], $b['title']);
+        });
+        
+        // Separar produtos iniciais (30) dos demais
+        $initial_products = array_slice($locations_data, 0, 30);
+        $remaining_products = array_slice($locations_data, 30);
         
         wp_reset_postdata();
 
@@ -361,7 +378,7 @@ class SimpleLocatorWooCommerceFilter {
 
         // Se não houver localizações, retornar mensagem
         if (empty($locations_data)) {
-            return $debug_info . '<p>' . __('Nenhum produto com localização encontrado. Verifique se os produtos têm coordenadas de latitude e longitude configuradas.', 'simple-locator-wc-filter') . '</p>';
+            return $debug_info . '<p>' . __('Nenhum montador com localização encontrado. Verifique se os montadores têm coordenadas de latitude e longitude configuradas.', 'simple-locator-wc-filter') . '</p>';
         }
 
         // Gerar ID único para o mapa
@@ -410,9 +427,28 @@ class SimpleLocatorWooCommerceFilter {
             <?php if ($atts['show_list'] === 'true'): ?>
             <!-- Lista de produtos -->
             <div class="products-list">
-                <h3><?php echo sprintf(__('Produtos Encontrados (%d)', 'simple-locator-wc-filter'), count($locations_data)); ?></h3>
+                <h3><?php echo sprintf(__('Montadores Encontrados (%d)', 'simple-locator-wc-filter'), count($locations_data)); ?></h3>
+                <p class="products-showing">
+                    <?php echo sprintf(__('Mostrando %d de %d montadores', 'simple-locator-wc-filter'), count($initial_products), count($locations_data)); ?>
+                </p>
+                
+                <!-- Filtro de Ordenação -->
+                <div class="sort-filter-container">
+                    <label for="sort-select" class="sort-label">
+                        <?php _e('Ordenar por:', 'simple-locator-wc-filter'); ?>
+                    </label>
+                    <select id="sort-select" class="sort-select" onchange="sortProducts(this.value)">
+                        <option value="alphabetical-asc" selected>
+                            <?php _e('A-Z (Crescente)', 'simple-locator-wc-filter'); ?>
+                        </option>
+                        <option value="alphabetical-desc">
+                            <?php _e('Z-A (Decrescente)', 'simple-locator-wc-filter'); ?>
+                        </option>
+                    </select>
+                </div>
+                
                 <div class="products-grid">
-                    <?php foreach ($locations_data as $location): ?>
+                    <?php foreach ($initial_products as $location): ?>
                     <div class="product-item">
                         <?php if ($location['image']): ?>
                         <img src="<?php echo $location['image']; ?>" alt="<?php echo esc_attr($location['title']); ?>" class="product-image-square">
@@ -424,13 +460,23 @@ class SimpleLocatorWooCommerceFilter {
                             <button onclick="focusMapLocation(<?php echo $location['lat']; ?>, <?php echo $location['lng']; ?>, this)" class="btn-map">
                                 <?php _e('Ver no Mapa', 'simple-locator-wc-filter'); ?>
                             </button>
-                            <a href="<?php echo $location['url']; ?>" class="btn-product">
-                                <?php _e('Ver Produto', 'simple-locator-wc-filter'); ?>
-                            </a>
+                                                    <a href="<?php echo $location['url']; ?>" class="btn-product">
+                            <?php _e('Ver Montador', 'simple-locator-wc-filter'); ?>
+                        </a>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
+                
+                <!-- Botão Carregar Mais -->
+                <?php if (count($remaining_products) > 0): ?>
+                <div class="load-more-container">
+                    <button id="load-more-btn" class="load-more-btn" onclick="loadMoreProducts()">
+                        <?php _e('Carregar Mais Montadores', 'simple-locator-wc-filter'); ?>
+                        <span class="remaining-count">(<?php echo count($remaining_products); ?> restantes)</span>
+                    </button>
+                </div>
+                <?php endif; ?>
             </div>
             <?php endif; ?>
             
@@ -448,6 +494,8 @@ class SimpleLocatorWooCommerceFilter {
 
             // Dados das localizações
             var locations = <?php echo json_encode($locations_data); ?>;
+            var remainingProducts = <?php echo json_encode($remaining_products); ?>;
+            var currentProductsCount = <?php echo count($initial_products); ?>;
             
             // Definir centro padrão (São Paulo)
             var defaultCenter = {lat: -23.5505, lng: -46.6333};
@@ -484,7 +532,7 @@ class SimpleLocatorWooCommerceFilter {
                             ${location.image ? '<img src="' + location.image + '" class="map-popup-image">' : ''}
                             <h4 class="map-popup-title"><a href="${location.url}" target="_blank">${location.title}</a></h4>
                             <p class="map-popup-address"><strong><?php _e('Endereço:', 'simple-locator-wc-filter'); ?></strong> ${location.address}</p>
-                            <a href="${location.url}" target="_blank" class="map-popup-button"><?php _e('Ver Produto', 'simple-locator-wc-filter'); ?></a>
+                            <a href="${location.url}" target="_blank" class="map-popup-button"><?php _e('Ver Montador', 'simple-locator-wc-filter'); ?></a>
                         </div>
                     `
                 });
@@ -585,6 +633,115 @@ class SimpleLocatorWooCommerceFilter {
                     }, 2000);
                 }, 500); // Aguarda 500ms para o scroll terminar
             };
+
+            // Função global para ordenar montadores
+            window.sortProducts = function(sortType) {
+                var productsGrid = document.querySelector('.products-grid');
+                if (!productsGrid) return;
+                
+                var products = Array.from(productsGrid.children);
+                if (products.length === 0) return;
+                
+                // Criar array com dados dos produtos para ordenação
+                var productsWithData = products.map(function(productElement) {
+                    var titleElement = productElement.querySelector('h4 a');
+                    var title = titleElement ? titleElement.textContent.trim() : '';
+                    return {
+                        element: productElement,
+                        title: title
+                    };
+                });
+                
+                // Ordenar baseado no tipo selecionado
+                productsWithData.sort(function(a, b) {
+                    switch(sortType) {
+                        case 'alphabetical-asc':
+                            return a.title.localeCompare(b.title);
+                        case 'alphabetical-desc':
+                            return b.title.localeCompare(a.title);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Limpar o grid
+                productsGrid.innerHTML = '';
+                
+                // Adicionar produtos na nova ordem
+                productsWithData.forEach(function(item) {
+                    productsGrid.appendChild(item.element);
+                });
+                
+                // Efeito visual de reorganização
+                productsGrid.style.opacity = '0.7';
+                setTimeout(function() {
+                    productsGrid.style.opacity = '1';
+                }, 200);
+            };
+
+            // Função global para carregar mais montadores
+            window.loadMoreProducts = function() {
+                var productsGrid = document.querySelector('.products-grid');
+                var loadMoreBtn = document.getElementById('load-more-btn');
+                var productsShowing = document.querySelector('.products-showing');
+                
+                if (!productsGrid || remainingProducts.length === 0) return;
+                
+                // Mostrar loading no botão
+                var originalText = loadMoreBtn.innerHTML;
+                loadMoreBtn.innerHTML = '<?php _e('Carregando...', 'simple-locator-wc-filter'); ?>';
+                loadMoreBtn.disabled = true;
+                
+                // Simular delay para UX
+                setTimeout(function() {
+                    // Carregar mais 30 produtos (ou o que restar)
+                    var productsToLoad = remainingProducts.splice(0, 30);
+                    
+                    // Criar elementos HTML para os novos produtos
+                    productsToLoad.forEach(function(product) {
+                        var productElement = createProductElement(product);
+                        productsGrid.appendChild(productElement);
+                    });
+                    
+                    // Atualizar contador
+                    currentProductsCount += productsToLoad.length;
+                    if (productsShowing) {
+                        productsShowing.textContent = '<?php _e('Mostrando', 'simple-locator-wc-filter'); ?> ' + currentProductsCount + ' <?php _e('de', 'simple-locator-wc-filter'); ?> ' + locations.length + ' <?php _e('montadores', 'simple-locator-wc-filter'); ?>';
+                    }
+                    
+                    // Atualizar botão ou escondê-lo
+                    if (remainingProducts.length > 0) {
+                        loadMoreBtn.innerHTML = '<?php _e('Carregar Mais Montadores', 'simple-locator-wc-filter'); ?> <span class="remaining-count">(' + remainingProducts.length + ' <?php _e('restantes', 'simple-locator-wc-filter'); ?>)</span>';
+                        loadMoreBtn.disabled = false;
+                    } else {
+                        loadMoreBtn.parentElement.style.display = 'none';
+                    }
+                }, 500);
+            };
+            
+            // Função para criar elemento de montador
+            function createProductElement(product) {
+                var productDiv = document.createElement('div');
+                productDiv.className = 'product-item';
+                
+                var imageHtml = product.image ? '<img src="' + product.image + '" alt="' + product.title + '" class="product-image-square">' : '';
+                
+                productDiv.innerHTML = 
+                    imageHtml +
+                    '<h4><a href="' + product.url + '">' + product.title + '</a></h4>' +
+                    '<p class="price">' + product.price + '</p>' +
+                    '<p class="address">' + product.address + '</p>' +
+                    '<div class="product-buttons">' +
+                        '<button onclick="focusMapLocation(' + product.lat + ', ' + product.lng + ', this)" class="btn-map">' +
+                            '<?php _e('Ver no Mapa', 'simple-locator-wc-filter'); ?>' +
+                        '</button>' +
+                        '<a href="' + product.url + '" class="btn-product">' +
+                            '<?php _e('Ver Montador', 'simple-locator-wc-filter'); ?>' +
+                        '</a>' +
+                    '</div>';
+                
+                return productDiv;
+            }
         });
         </script>
 

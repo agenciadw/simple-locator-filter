@@ -34,10 +34,8 @@ compile_po() {
     fi
 }
 
-# Compilar arquivos .po existentes
+# Compilar arquivo .po em português
 compile_po "simple-locator-wc-filter-pt_BR.po"
-compile_po "simple-locator-wc-filter-en_US.po"
-compile_po "simple-locator-wc-filter-es_ES.po"
 
 echo ""
 echo "🎉 Compilação concluída!"
@@ -47,11 +45,8 @@ ls -la *.mo 2>/dev/null || echo "Nenhum arquivo .mo encontrado"
 
 echo ""
 echo "📋 Próximos passos:"
-echo "1. Os arquivos .mo foram criados automaticamente"
-echo "2. O WordPress detectará as traduções automaticamente"
-echo "3. Vá em Configurações > Geral para selecionar o idioma"
+echo "1. O arquivo .mo foi criado automaticamente"
+echo "2. O WordPress detectará a tradução automaticamente"
+echo "3. Configure o idioma português no WordPress"
 echo ""
-echo "🌍 Para criar novas traduções:"
-echo "1. Copie o arquivo .pot: cp simple-locator-wc-filter.pot simple-locator-wc-filter-XX_XX.po"
-echo "2. Edite o arquivo .po com suas traduções"
-echo "3. Execute este script novamente para compilar"
+echo "🇧🇷 Tradução em português brasileiro ativa!"

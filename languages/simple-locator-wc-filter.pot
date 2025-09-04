@@ -147,3 +147,71 @@ msgstr ""
 #: simple-locator-woocommerce-filter.php:315
 msgid "Carregando..."
 msgstr ""
+
+#: simple-locator-woocommerce-filter.php:418
+msgid "Ordenar por:"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:434
+msgid "A-Z (Crescente)"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:437
+msgid "Z-A (Decrescente)"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:430
+msgid "Montadores Encontrados (%d)"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:432
+msgid "Mostrando %d de %d montadores"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:236
+msgid "Nenhum montador encontrado com os critérios especificados."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:381
+msgid "Nenhum montador com localização encontrado. Verifique se os montadores têm coordenadas de latitude e longitude configuradas."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:463
+msgid "Ver Montador"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:475
+msgid "Carregar Mais Montadores"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:476
+msgid "restantes"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:535
+msgid "Ver Montador"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:692
+msgid "Carregando..."
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:709
+msgid "Mostrando"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:709
+msgid "de"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:709
+msgid "montadores"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:714
+msgid "restantes"
+msgstr ""
+
+#: simple-locator-woocommerce-filter.php:739
+msgid "Ver Montador"
+msgstr ""

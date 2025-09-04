@@ -145,3 +145,45 @@ msgstr "Instalar Regenerate Thumbnails"
 #: simple-locator-woocommerce-filter.php:315
 msgid "Carregando..."
 msgstr "Carregando..."
+
+#: simple-locator-woocommerce-filter.php:418
+msgid "Ordenar por:"
+msgstr "Ordenar por:"
+
+#: simple-locator-woocommerce-filter.php:434
+msgid "A-Z (Crescente)"
+msgstr "A-Z (Crescente)"
+
+#: simple-locator-woocommerce-filter.php:437
+msgid "Z-A (Decrescente)"
+msgstr "Z-A (Decrescente)"
+
+#: simple-locator-woocommerce-filter.php:430
+msgid "Montadores Encontrados (%d)"
+msgstr "Montadores Encontrados (%d)"
+
+#: simple-locator-woocommerce-filter.php:432
+msgid "Mostrando %d de %d montadores"
+msgstr "Mostrando %d de %d montadores"
+
+#: simple-locator-woocommerce-filter.php:236
+msgid "Nenhum montador encontrado com os critérios especificados."
+msgstr "Nenhum montador encontrado com os critérios especificados."
+
+#: simple-locator-woocommerce-filter.php:381
+msgid "Nenhum montador com localização encontrado. Verifique se os montadores têm coordenadas de latitude e longitude configuradas."
+msgstr "Nenhum montador com localização encontrado. Verifique se os montadores têm coordenadas de latitude e longitude configuradas."
+
+#: simple-locator-woocommerce-filter.php:463
+msgid "Ver Montador"
+msgstr "Ver Montador"
+
+#: simple-locator-woocommerce-filter.php:475
+msgid "Carregar Mais Montadores"
+msgstr "Carregar Mais Montadores"
+
+#: simple-locator-woocommerce-filter.php:476
+msgid "restantes"
+msgstr "restantes"
+
+

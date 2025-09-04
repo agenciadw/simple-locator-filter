@@ -429,3 +429,217 @@
     display: none;
   }
 }
+
+/* ========================================
+   FILTRO DE ORDENAÇÃO
+   ======================================== */
+
+.sort-filter-container {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  font-weight: 600;
+  color: #495057;
+  margin: 0;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  background: #fff;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 35px;
+}
+
+.sort-select:hover {
+  border-color: #fb7203;
+  box-shadow: 0 2px 4px rgba(251, 114, 3, 0.1);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #fb7203;
+  box-shadow: 0 0 0 3px rgba(251, 114, 3, 0.1);
+}
+
+.sort-select option {
+  padding: 8px;
+  background: #fff;
+  color: #495057;
+}
+
+/* Responsividade do filtro */
+@media (max-width: 768px) {
+  .sort-filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .sort-label {
+    text-align: center;
+  }
+
+  .sort-select {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sort-filter-container {
+    margin: 15px 0;
+    padding: 12px;
+  }
+
+  .sort-select {
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+}
+
+/* Efeito de transição para reorganização */
+.products-grid {
+  transition: opacity 0.2s ease;
+}
+
+/* Estados de loading para o filtro */
+.sort-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f8f9fa;
+}
+
+/* Estilo para quando não há produtos */
+.sort-filter-container:empty {
+  display: none;
+}
+
+/* ========================================
+   BOTÃO CARREGAR MAIS
+   ======================================== */
+
+.load-more-container {
+  text-align: center;
+  margin: 30px 0;
+  padding: 20px;
+}
+
+.load-more-btn {
+  background: linear-gradient(135deg, #fb7203 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(251, 114, 3, 0.3);
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.load-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 114, 3, 0.4);
+  background: linear-gradient(135deg, #ff8c42 0%, #fb7203 100%);
+}
+
+.load-more-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(251, 114, 3, 0.3);
+}
+
+.load-more-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 10px rgba(251, 114, 3, 0.2);
+}
+
+.remaining-count {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Efeito de loading */
+.load-more-btn:disabled::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Contador de produtos */
+.products-showing {
+  color: #6c757d;
+  font-size: 14px;
+  margin: 10px 0 20px 0;
+  font-style: italic;
+}
+
+/* Responsividade do botão */
+@media (max-width: 768px) {
+  .load-more-btn {
+    padding: 12px 25px;
+    font-size: 15px;
+    min-width: 180px;
+  }
+
+  .load-more-container {
+    margin: 25px 0;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .load-more-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    min-width: 160px;
+  }
+
+  .remaining-count {
+    font-size: 12px;
+  }
+}
